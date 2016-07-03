@@ -10,31 +10,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import com.google.common.collect.Maps;
 
 public class SizeChangeUtils {
-	private static Method setSize;
 	private static Map<Entity, Float> scales = Maps.newHashMap();
 
-	static {
-		for (Method method : Entity.class.getDeclaredMethods()) {
-			for (String name : new String[] { "setSize", "func_177725_a" }) {
-				if (method.getName().equals(name)) {
-					method.setAccessible(true);
-					setSize = method;
-					break;
-				}
-			}
-		}
-	}
-
 	public static void setSize(Entity entity, float x, float y) {
-		try {
-			setSize.invoke(entity, x, y);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		entity.setEntityBoundingBox(new AxisAlignedBB(entity.posX - x/2, entity.posY, entity.posZ - x/2, entity.posX + x/2, entity.posY +y, entity.posZ + x/2));
+		entity.width = x;
+		entity.height = y;
 	}
 
 	public static void setScale(Entity entity, float scale) {
