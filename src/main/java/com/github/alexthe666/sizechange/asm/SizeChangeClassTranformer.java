@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SizeChangeClassTranformer implements IClassTransformer {
-    @Override
-    public byte[] transform(String name, String transformedName, byte[] classBytes) {
-        return classBytes;
-    }
+	@Override
+	public byte[] transform(String name, String transformedName, byte[] classBytes) {
+		return classBytes;
+	}
 }

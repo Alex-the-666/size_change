@@ -4,7 +4,7 @@ import net.ilexiconn.llibrary.server.entity.EntityProperties;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class SizeChangeEntityProperties extends EntityProperties{
+public class SizeChangeEntityProperties extends EntityProperties {
 
 	public float scale;
 

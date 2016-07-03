@@ -20,7 +20,7 @@ public class CommonEvents {
 	@SubscribeEvent
 	public void onEntityUpdate(LivingUpdateEvent event) {
 		float scale = SizeChangeUtils.getScale(event.getEntity());
-		//System.out.println(event.getEntity().worldObj.isRemote);
+		// System.out.println(event.getEntity().worldObj.isRemote);
 		SizeChangeUtils.setSize(event.getEntity(), 0.5F, 0.5F);
 		/*
 		 * if(event.getEntity() instanceof EntityPlayer){
@@ -41,8 +41,6 @@ public class CommonEvents {
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event) {
 		float scale = SizeChangeUtils.getScale(event.player);
-		event.player.eyeHeight = (scale - 1) * 1.62f
-				+ event.player.getDefaultEyeHeight() * scale
-				- event.player.getDefaultEyeHeight() * (scale - 1);
+		event.player.eyeHeight = (scale - 1) * 1.62f + event.player.getDefaultEyeHeight() * scale - event.player.getDefaultEyeHeight() * (scale - 1);
 	}
 }

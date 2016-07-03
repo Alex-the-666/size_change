@@ -25,7 +25,7 @@ public class SizeChangeUtils {
 		}
 	}
 
-	public static void setSize(Entity entity, float x, float y){
+	public static void setSize(Entity entity, float x, float y) {
 		try {
 			setSize.invoke(entity, x, y);
 		} catch (IllegalAccessException e) {
