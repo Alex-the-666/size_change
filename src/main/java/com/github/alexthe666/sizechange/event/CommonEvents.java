@@ -3,6 +3,7 @@ package com.github.alexthe666.sizechange.event;
 import java.util.Map;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -30,6 +31,7 @@ public class CommonEvents {
 				SizeChangeUtils.setSize(event.getEntity(), event.getEntity().width * scale, event.getEntity().height * scale);
 
 			}
+			event.getEntityLiving().setAIMoveSpeed(scale);
 		}
 	}
 
