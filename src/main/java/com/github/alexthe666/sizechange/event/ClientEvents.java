@@ -4,51 +4,80 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.ilexiconn.llibrary.LLibrary;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.lwjgl.opengl.GL11;
+
+import com.github.alexthe666.sizechange.SizeChangeUtils;
+
 public class ClientEvents {
-    private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	@SubscribeEvent
 	public void onLivingRender(RenderLivingEvent.Pre event) {
-		doRender(event.getRenderer(), event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getEntity().rotationYaw, LLibrary.PROXY.getPartialTicks());
 		event.setCanceled(true);
+		Field shadow = ReflectionHelper.findField(Render.class, new String[] { "shadowSize", "field_76989_e" });
+		float shadowSize = 1;
+		try {
+			shadowSize = (Float) shadow.get(event.getRenderer());
+		} catch (IllegalArgumentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			shadow.set(event.getRenderer(), shadowSize * 0.5F);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		doRender(event.getRenderer(), event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getEntity().rotationYaw, LLibrary.PROXY.getPartialTicks());
 	}
 
 	public void doRender(RenderLivingBase render, EntityLivingBase entity, double x, double y, double z, float entityYaw, float partialTicks) {
-		if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre(entity, render, x, y, z)))
-			return;
-		System.out.println("help");
 		GlStateManager.pushMatrix();
 		GlStateManager.disableCull();
-		//render.getMainModel().swingProgress = render.getSwingProgress(entity, partialTicks);
-		render.getMainModel().swingProgress = invokeFloatFromMethod(reflectMethod(render, new String[]{"getSwingProgress", "func_77040_d"}, EntityLivingBase.class, float.class), render, entity, partialTicks);
+		// render.getMainModel().swingProgress = render.getSwingProgress(entity,
+		// partialTicks);
+		render.getMainModel().swingProgress = invokeFloatFromMethod(reflectMethod(render, new String[] { "getSwingProgress", "func_77040_d" }, EntityLivingBase.class, float.class), render, entity, partialTicks);
 		boolean shouldSit = entity.isRiding() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
 		render.getMainModel().isRiding = shouldSit;
 		render.getMainModel().isChild = entity.isChild();
 		try {
-			float f = invokeFloatFromMethod(reflectMethod(render, new String[]{"interpolateRotation", "func_77034_a"}, float.class, float.class, float.class), render, entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
-			//render.interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
-			float f1 = invokeFloatFromMethod(reflectMethod(render, new String[]{"interpolateRotation", "func_77034_a"}, float.class, float.class, float.class), render, entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
-			//float f1 = render.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
+			float f = invokeFloatFromMethod(reflectMethod(render, new String[] { "interpolateRotation", "func_77034_a" }, float.class, float.class, float.class), render, entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
+			// render.interpolateRotation(entity.prevRenderYawOffset,
+			// entity.renderYawOffset, partialTicks);
+			float f1 = invokeFloatFromMethod(reflectMethod(render, new String[] { "interpolateRotation", "func_77034_a" }, float.class, float.class, float.class), render, entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
+			// float f1 = render.interpolateRotation(entity.prevRotationYawHead,
+			// entity.rotationYawHead, partialTicks);
 			float f2 = f1 - f;
 
 			if (shouldSit && entity.getRidingEntity() instanceof EntityLivingBase) {
 				EntityLivingBase entitylivingbase = (EntityLivingBase) entity.getRidingEntity();
-				f = invokeFloatFromMethod(reflectMethod(render, new String[]{"interpolateRotation", "func_77034_a"}, float.class, float.class, float.class), render, entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, partialTicks);
-				//f = render.interpolateRotation(entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, partialTicks);
+				f = invokeFloatFromMethod(reflectMethod(render, new String[] { "interpolateRotation", "func_77034_a" }, float.class, float.class, float.class), render, entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, partialTicks);
+				// f =
+				// render.interpolateRotation(entitylivingbase.prevRenderYawOffset,
+				// entitylivingbase.renderYawOffset, partialTicks);
 				f2 = f1 - f;
 				float f3 = MathHelper.wrapDegrees(f2);
 
@@ -68,12 +97,14 @@ public class ClientEvents {
 			}
 
 			float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
-			invokeMethod(reflectMethod(render, new String[]{"renderLivingAt", "func_77039_a"}, EntityLivingBase.class, double.class, double.class, double.class), render, entity, x, y, z);
-			//render.renderLivingAt(entity, x, y, z);
-			float f8 = invokeFloatFromMethod(reflectMethod(render, new String[]{"handleRotationFloat", "func_77044_a"}, EntityLivingBase.class, float.class), render, entity, partialTicks);
-			//float f8 = render.handleRotationFloat(entity, partialTicks);
-			//render.rotateCorpse(entity, f8, f, partialTicks);
-			invokeMethod(reflectMethod(render, new String[]{"rotateCorpse", "func_77043_a"}, EntityLivingBase.class, float.class, float.class, float.class), render, entity, f8, f, partialTicks);
+			invokeMethod(reflectMethod(render, new String[] { "renderLivingAt", "func_77039_a" }, EntityLivingBase.class, double.class, double.class, double.class), render, entity, x, y, z);
+			GL11.glScalef(SizeChangeUtils.getScale(entity), SizeChangeUtils.getScale(entity), SizeChangeUtils.getScale(entity));
+			// render.renderLivingAt(entity, x, y, z);
+			float f8 = invokeFloatFromMethod(reflectMethod(render, new String[] { "handleRotationFloat", "func_77044_a" }, EntityLivingBase.class, float.class), render, entity, partialTicks);
+			// float f8 = render.handleRotationFloat(entity, partialTicks);
+			// render.rotateCorpse(entity, f8, f, partialTicks);
+			invokeMethod(reflectMethod(render, new String[] { "rotateCorpse", "func_77043_a" }, EntityLivingBase.class, float.class, float.class, float.class), render, entity, f8, f, partialTicks);
+
 			float f4 = render.prepareScale(entity, partialTicks);
 			float f5 = 0.0F;
 			float f6 = 0.0F;
@@ -89,53 +120,61 @@ public class ClientEvents {
 				if (f5 > 1.0F) {
 					f5 = 1.0F;
 				}
+				if (!(entity instanceof EntityPlayer)) {
+					f5 *= 1 / SizeChangeUtils.getScale(entity);
+					f6 *= 1 / SizeChangeUtils.getScale(entity);
+				}
 			}
-
 			GlStateManager.enableAlpha();
 			render.getMainModel().setLivingAnimations(entity, f6, f5, partialTicks);
 			render.getMainModel().setRotationAngles(f6, f5, f8, f2, f7, f4, entity);
-			if (invokeBooleanFromField(reflectField(new String[]{"renderOutlines", "field_178639_r"}), render)) {
-			//if (invokeBooleanFromField(reflectField(new String[]{"renderOutlines", "field_178639_r"}), render)) {
-				//boolean flag1 = render.setScoreTeamColor(entity);
-				boolean flag1 = invokeBooleanFromMethod(reflectMethod(render, new String[]{"setScoreTeamColor", "func_177088_c"}, EntityLivingBase.class), render, entity);
+			if (entity.isPotionActive(MobEffects.GLOWING)) {
+				// if (invokeBooleanFromField(reflectField(new
+				// String[]{"renderOutlines", "field_178639_r"}), render)) {
+				// if (invokeBooleanFromField(reflectField(new
+				// String[]{"renderOutlines", "field_178639_r"}), render)) {
+				// boolean flag1 = render.setScoreTeamColor(entity);
+				boolean flag1 = invokeBooleanFromMethod(reflectMethod(render, new String[] { "setScoreTeamColor", "func_177088_c" }, EntityLivingBase.class), render, entity);
 				GlStateManager.enableColorMaterial();
-				int color = invokeIntFromMethod(reflectMethod(render, new String[]{"getTeamColor", "func_188298_c"}, EntityLivingBase.class), render, entity);
-				GlStateManager.enableOutlineMode(color);
-				if(!invokeBooleanFromField(reflectField(new String[]{"renderMarker", "field_188323_j"}), render)){
-					invokeMethod(reflectMethod(render, new String[]{"renderModel", "func_77036_a"}, float.class, float.class, float.class, float.class, float.class, float.class), render, entity, f6, f5, f8, f2, f7, f4);
-					//render.renderModel(entity, f6, f5, f8, f2, f7, f4);
+				GlStateManager.enableOutlineMode(this.getTeamColor(render, entity));
+				if (!invokeBooleanFromField(reflectField(new String[] { "renderMarker", "field_188323_j" }), render)) {
+					invokeMethod(reflectMethod(render, new String[] { "renderModel", "func_77036_a" }, EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class), render, entity, f6, f5, f8, f2, f7, f4);
+					// render.renderModel(entity, f6, f5, f8, f2, f7, f4);
 				}
 
 				if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).isSpectator()) {
-					invokeMethod(reflectMethod(render, new String[]{"renderLayers", "func_177093_a"}, EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class), render, entity, f6, f5, partialTicks, f8, f2, f7, f4);
-					//render.renderLayers(entity, f6, f5, partialTicks, f8, f2, f7, f4);
+					invokeMethod(reflectMethod(render, new String[] { "renderLayers", "func_177093_a" }, EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class), render, entity, f6, f5, partialTicks, f8, f2, f7, f4);
+					// render.renderLayers(entity, f6, f5, partialTicks, f8, f2,
+					// f7, f4);
 				}
-				
+
 				GlStateManager.disableOutlineMode();
 				GlStateManager.disableColorMaterial();
 
 				if (flag1) {
-					//render.unsetScoreTeamColor();
-					invokeMethod(reflectMethod(render, new String[]{"unsetScoreTeamColor", "func_180565_e"}), render);
+					// render.unsetScoreTeamColor();
+					invokeMethod(reflectMethod(render, new String[] { "unsetScoreTeamColor", "func_180565_e" }), render);
 
 				}
 			} else {
-				boolean flag = invokeBooleanFromMethod(reflectMethod(render, new String[]{"setDoRenderBrightness", "func_177090_c"}, EntityLivingBase.class, float.class), render, entity, partialTicks);
-				//boolean flag = render.setDoRenderBrightness(entity, partialTicks);
-				
-				//render.renderModel(entity, f6, f5, f8, f2, f7, f4);
-				invokeMethod(reflectMethod(render, new String[]{"renderModel", "func_77036_a"}, float.class, float.class, float.class, float.class, float.class, float.class), render, entity, f6, f5, f8, f2, f7, f4);
+				boolean flag = invokeBooleanFromMethod(reflectMethod(render, new String[] { "setDoRenderBrightness", "func_177090_c" }, EntityLivingBase.class, float.class), render, entity, partialTicks);
+				// boolean flag = render.setDoRenderBrightness(entity,
+				// partialTicks);
+
+				// render.renderModel(entity, f6, f5, f8, f2, f7, f4);
+				invokeMethod(reflectMethod(render, new String[] { "renderModel", "func_77036_a" }, EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class), render, entity, f6, f5, f8, f2, f7, f4);
 
 				if (flag) {
-					invokeMethod(reflectMethod(render, new String[]{"unsetBrightness", "func_177091_f"}), render);
-					//render.unsetBrightness();
+					invokeMethod(reflectMethod(render, new String[] { "unsetBrightness", "func_177091_f" }), render);
+					// render.unsetBrightness();
 				}
 
 				GlStateManager.depthMask(true);
 
 				if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).isSpectator()) {
-					invokeMethod(reflectMethod(render, new String[]{"renderLayers", "func_177093_a"}, EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class), render, entity, f6, f5, partialTicks, f8, f2, f7, f4);
-					//render.renderLayers(entity, f6, f5, partialTicks, f8, f2, f7, f4);
+					invokeMethod(reflectMethod(render, new String[] { "renderLayers", "func_177093_a" }, EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class), render, entity, f6, f5, partialTicks, f8, f2, f7, f4);
+					// render.renderLayers(entity, f6, f5, partialTicks, f8, f2,
+					// f7, f4);
 				}
 			}
 
@@ -149,7 +188,7 @@ public class ClientEvents {
 		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 		GlStateManager.enableCull();
 		GlStateManager.popMatrix();
-		if (!invokeBooleanFromField(reflectField(new String[]{"renderOutlines", "field_178639_r"}), render)) {
+		if (!entity.isPotionActive(MobEffects.GLOWING)) {
 			render.renderName(entity, x, y, z);
 		}
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post(entity, render, x, y, z));
@@ -164,7 +203,7 @@ public class ClientEvents {
 		Field field = ReflectionHelper.findField(RenderLivingBase.class, names);
 		return field;
 	}
-	
+
 	public boolean invokeBooleanFromField(Field field, RenderLivingBase render) {
 		boolean b = false;
 		try {
@@ -202,7 +241,7 @@ public class ClientEvents {
 		}
 		return f;
 	}
-	
+
 	public boolean invokeBooleanFromMethod(Method method, RenderLivingBase render, Object... args) {
 		boolean b = false;
 		try {
@@ -216,7 +255,7 @@ public class ClientEvents {
 		}
 		return b;
 	}
-	
+
 	public int invokeIntFromMethod(Method method, RenderLivingBase render, Object... args) {
 		int i = 0;
 		try {
@@ -230,7 +269,7 @@ public class ClientEvents {
 		}
 		return i;
 	}
-	
+
 	public void invokeMethod(Method method, RenderLivingBase render, Object... args) {
 		try {
 			method.invoke(render, args);
@@ -241,5 +280,20 @@ public class ClientEvents {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected int getTeamColor(RenderLivingBase render, EntityLivingBase entityIn) {
+		int i = 16777215;
+		ScorePlayerTeam scoreplayerteam = (ScorePlayerTeam) entityIn.getTeam();
+
+		if (scoreplayerteam != null) {
+			String s = FontRenderer.getFormatFromString(scoreplayerteam.getColorPrefix());
+
+			if (s.length() >= 2) {
+				i = render.getFontRendererFromRenderManager().getColorCode(s.charAt(1));
+			}
+		}
+
+		return i;
 	}
 }
