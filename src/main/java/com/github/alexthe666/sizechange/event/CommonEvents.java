@@ -36,7 +36,7 @@ public class CommonEvents {
             ((EntityLiving) event.getEntityLiving()).getNavigator().setSpeed(scale < 1 ? scale * 3 : scale);
         }
         if (event.getEntityLiving() instanceof EntityPlayer) {
-            double speed = 0.10000000149011612 * scale;
+            double speed = 0.30000000149011612 * scale;
             EntityPlayer player = (EntityPlayer) event.getEntityLiving();
             player.capabilities.setPlayerWalkSpeed((float) speed);
             player.capabilities.setFlySpeed((float) speed * 2.0F);
