@@ -63,6 +63,9 @@ public class CommonEvents {
 				sizeCache.put(event.player, new Vector2f(event.player.width, event.player.height));
 				SizeChangeUtils.setSize(event.player, event.player.width * scale, event.player.height * scale);
 			}
+			if(event.player.isElytraFlying() && event.player.rotationPitch < -45 && scale < 1){
+				event.player.motionY += 0.1F;
+			}
 		}
 	}
 }
