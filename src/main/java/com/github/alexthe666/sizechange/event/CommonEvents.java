@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.passive.EntityOcelot;
@@ -39,7 +40,7 @@ public class CommonEvents {
 			}
 			if (event.getEntityLiving() instanceof EntityPlayer) {
 				event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale * 0.10000000149011612D);
-				((EntityPlayer) event.getEntityLiving()).capabilities.setFlySpeed((float) (scale * 0.10000000149011612D));
+				((EntityPlayer) event.getEntityLiving()).capabilities.setFlySpeed((float) (scale * 0.40000000149011612D));
 			}
 
 		}

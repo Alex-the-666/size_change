@@ -287,7 +287,7 @@ public class ClientEvents {
             String s = FontRenderer.getFormatFromString(scoreplayerteam.getColorPrefix());
 
             if (s.length() >= 2) {
-                i = render.getFontRendererFromRenderManager().getColorCode(s.charAt(1));
+            //    i = render.getFontRendererFromRenderManager().getColorCode(s.charAt(1));
             }
         }
 
