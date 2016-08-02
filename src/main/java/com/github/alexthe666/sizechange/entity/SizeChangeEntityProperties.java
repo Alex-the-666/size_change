@@ -7,15 +7,18 @@ import net.minecraft.nbt.NBTTagCompound;
 public class SizeChangeEntityProperties extends EntityProperties {
 
 	public float scale;
+	public float scale_progress;
 
 	@Override
 	public void saveNBTData(NBTTagCompound compound) {
 		compound.setFloat("Scale", scale);
+		compound.setFloat("ScaleProg", scale_progress);
 	}
 
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
 		this.scale = compound.getFloat("Scale");
+		this.scale_progress = compound.getFloat("ScaleProg");
 	}
 
 	@Override

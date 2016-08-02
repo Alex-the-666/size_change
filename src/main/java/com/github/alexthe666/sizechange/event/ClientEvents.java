@@ -1,17 +1,25 @@
 package com.github.alexthe666.sizechange.event;
 
 import com.github.alexthe666.sizechange.SizeChangeUtils;
+import com.github.alexthe666.sizechange.items.ItemRay;
 import net.ilexiconn.llibrary.LLibrary;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -28,6 +36,7 @@ import java.lang.reflect.Method;
 
 public class ClientEvents {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final ResourceLocation GUARDIAN_BEAM_TEXTURE = new ResourceLocation("textures/entity/guardian_beam.png");
 
     @SubscribeEvent
     public void onLivingRender(RenderLivingEvent.Pre event) {
