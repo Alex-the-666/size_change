@@ -3,6 +3,9 @@ package com.github.alexthe666.sizechange.event;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import com.github.alexthe666.sizechange.entity.SizeChangeEntityProperties;
+import net.ilexiconn.llibrary.server.entity.EntityProperties;
+import net.ilexiconn.llibrary.server.entity.EntityPropertiesHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -32,25 +35,48 @@ public class CommonEvents {
 	@SubscribeEvent
 	public void onEntityUpdate(LivingUpdateEvent event) {
 		float initialScale = SizeChangeUtils.getScale(event.getEntity());
-		SizeChangeUtils.setScale(event.getEntityLiving(), event.getEntity() instanceof EntityOcelot ? 1 : 0.125F);
+		SizeChangeEntityProperties properties = EntityPropertiesHandler.INSTANCE.getProperties((event.getEntity()), SizeChangeEntityProperties.class);
+		if(properties.scale == 0){
+			properties.scale = 1;
+		}
+		if(properties.target_scale == 0){
+			properties.target_scale = 1;
+		}
+		if(properties.scale < properties.target_scale){
+			float max = properties.target_scale - properties.scale;
+			float sub = max / 40;
+			properties.scale += sub;
+			if(properties.scale >= properties.target_scale) {
+				properties.scale = properties.target_scale;
+			}
+			}
+		if(properties.scale > properties.target_scale){
+			float max = properties.scale - properties.target_scale;
+			float sub = max / 40;
+			properties.scale -= sub;
+			if(properties.scale <= properties.target_scale) {
+				properties.scale = properties.target_scale;
+			}
+		}
+		SizeChangeUtils.setScale(event.getEntityLiving(), properties.scale);
 		float scale = SizeChangeUtils.getScale(event.getEntity());
 		if (scale != initialScale) {
 			if (event.getEntityLiving() instanceof EntityLiving) {
 				((EntityLiving) event.getEntityLiving()).getNavigator().setSpeed(scale < 1 ? scale * 3 : scale);
 			}
-			if (event.getEntityLiving() instanceof EntityPlayer) {
+			if (event.getEntityLiving() instanceof EntityPlayer && properties.scale == properties.target_scale) {
 				event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale * 0.10000000149011612D);
 				((EntityPlayer) event.getEntityLiving()).capabilities.setFlySpeed((float) (scale * 0.40000000149011612D));
 			}
 
 		}
-		event.getEntityLiving().stepHeight = (float) (0.5D * scale);
+		event.getEntityLiving().stepHeight = scale > 0.5F ? scale : (float) (0.5D * scale);
 		if (!(event.getEntity() instanceof EntityPlayer)) {
 			if (sizeCache.containsKey(event.getEntity())) {
 				Vector2f size = sizeCache.get(event.getEntity());
-				SizeChangeUtils.setSize(event.getEntity(), size.x * scale, size.y * scale);
+				SizeChangeUtils.setSize(event.getEntity(), size.x * properties.scale, size.y * properties.scale);
 			} else {
-				sizeCache.put(event.getEntity(), new Vector2f(event.getEntity().width, event.getEntity().height));
+				sizeCache.put(event.getEntity(), new Vector2f(event.getEntity().width , event.getEntity().height));
 				SizeChangeUtils.setSize(event.getEntity(), event.getEntity().width * scale, event.getEntity().height * scale);
 			}
 		}
@@ -61,10 +87,12 @@ public class CommonEvents {
 	@SubscribeEvent
 	public void onEntityJump(LivingJumpEvent event) {
 		float scale = SizeChangeUtils.getScale(event.getEntity());
-		if (scale < 1 && (event.getEntityLiving().isSneaking() || event.getEntityLiving().isSprinting())) {
+		if (scale < 0.5F && (event.getEntityLiving().isSneaking() || event.getEntityLiving().isSprinting())) {
 			event.getEntityLiving().motionY = 0.4;
-		} else {
-			event.getEntityLiving().motionY = 0.3;
+		}else if(scale < 0.5F){
+			event.getEntityLiving().motionY = 0.2;
+		}else if(scale > 1F){
+			event.getEntityLiving().motionY *= scale;
 		}
 	}
 

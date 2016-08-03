@@ -1,3 +1,5 @@
 itemGroup.sizechange=Size Change
+item.sizechange.shrink_core.name=Shrink Core
+item.sizechange.growth_core.name=Growth Core
 item.sizechange.shrink_ray.name=Shrink Ray
 item.sizechange.growth_ray.name=Growth Ray
