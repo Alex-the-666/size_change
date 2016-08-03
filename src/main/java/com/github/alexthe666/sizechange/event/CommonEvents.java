@@ -66,7 +66,7 @@ public class CommonEvents {
 			}
 			if (event.getEntityLiving() instanceof EntityPlayer && properties.scale == properties.target_scale) {
 				event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale * 0.10000000149011612D);
-				((EntityPlayer) event.getEntityLiving()).capabilities.setFlySpeed((float) (scale * 0.40000000149011612D));
+				((EntityPlayer) event.getEntityLiving()).capabilities.setFlySpeed((float) (scale * 0.05D));
 			}
 
 		}
