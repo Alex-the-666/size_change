@@ -110,7 +110,7 @@ public class ClientEvents {
                 if (f5 > 1.0F) {
                     f5 = 1.0F;
                 }
-                f6 *= SizeChangeUtils.getScale(entity);
+                f6 *= 1/SizeChangeUtils.getScale(entity);
             }
             GlStateManager.enableAlpha();
             render.getMainModel().setLivingAnimations(entity, f6, f5, partialTicks);
