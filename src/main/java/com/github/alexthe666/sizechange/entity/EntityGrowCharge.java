@@ -34,7 +34,7 @@ public class EntityGrowCharge extends EntityThrowable
     protected void onImpact(RayTraceResult result) {
         if (result.entityHit != null && !result.entityHit.equals(this.getThrower())) {
             if (result.entityHit instanceof EntityLivingBase) {
-                float initialScale = SizeChangeUtils.getScale(result.entityHit);
+                float initialScale = getNearestSize(SizeChangeUtils.getScale(result.entityHit), new float[]{0.125F, 0.25F, 0.5F, 1F, 2F, 4F, 8F});
                 float newScale = Math.min(8, initialScale + initialScale);
                 SizeChangeEntityProperties properties = EntityPropertiesHandler.INSTANCE.getProperties((result.entityHit), SizeChangeEntityProperties.class);
                 properties.target_scale = newScale;
@@ -50,5 +50,18 @@ public class EntityGrowCharge extends EntityThrowable
         if (!this.worldObj.isRemote) {
             this.setDead();
         }
+    }
+
+    public float getNearestSize(float i, float[] sizes) {
+        float distance = Math.abs(sizes[0] - i);
+        int idx = 0;
+        for(int c = 1; c < sizes.length; c++){
+            float cdistance = Math.abs(sizes[c] - i);
+            if(cdistance < distance){
+                idx = c;
+                distance = cdistance;
+            }
+        }
+        return sizes[idx];
     }
 }

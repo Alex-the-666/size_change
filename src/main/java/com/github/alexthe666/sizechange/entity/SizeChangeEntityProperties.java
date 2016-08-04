@@ -8,17 +8,20 @@ public class SizeChangeEntityProperties extends EntityProperties {
 
 	public float scale;
 	public float target_scale;
+	public double base_speed;
 
 	@Override
 	public void saveNBTData(NBTTagCompound compound) {
 		compound.setFloat("Scale", scale);
 		compound.setFloat("TargetScale", target_scale);
+		compound.setDouble("DefaultSpeed", base_speed);
 	}
 
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
 		this.scale = compound.getFloat("Scale");
 		this.target_scale = compound.getFloat("TargetScale");
+		this.base_speed = compound.getDouble("DefaultSpeed");
 	}
 
 	@Override

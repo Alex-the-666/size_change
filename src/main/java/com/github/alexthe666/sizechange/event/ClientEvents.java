@@ -103,14 +103,20 @@ public class ClientEvents {
                 f5 = entity.prevLimbSwingAmount + (entity.limbSwingAmount - entity.prevLimbSwingAmount) * partialTicks;
                 f6 = entity.limbSwing - entity.limbSwingAmount * (1.0F - partialTicks);
 
-                if (entity.isChild()) {
+                if (entity.isChild())
+                {
                     f6 *= 3.0F;
                 }
 
-                if (f5 > 1.0F) {
+                if (f5 > 1.0F)
+                {
                     f5 = 1.0F;
                 }
-                f6 *= 1/SizeChangeUtils.getScale(entity);
+                if(SizeChangeUtils.getScale(entity) >= 1){
+                    f6 *= 1/SizeChangeUtils.getScale(entity);
+                }else{
+                    f6 *= SizeChangeUtils.getScale(entity);
+                }
             }
             GlStateManager.enableAlpha();
             render.getMainModel().setLivingAnimations(entity, f6, f5, partialTicks);

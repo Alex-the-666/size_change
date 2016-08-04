@@ -13,6 +13,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
@@ -59,19 +60,21 @@ public class CommonEvents {
 					properties.scale = properties.target_scale;
 				}
 			}
+			if (properties.target_scale - (properties.target_scale * 0.1) <= properties.scale && properties.scale < properties.target_scale){
+				properties.scale = properties.target_scale;
+			}
+
 			SizeChangeUtils.setScale(event.getEntityLiving(), properties.scale);
 			float scale = SizeChangeUtils.getScale(event.getEntity());
 			if (scale != initialScale) {
-				if (event.getEntityLiving() instanceof EntityLiving) {
-					((EntityLiving) event.getEntityLiving()).getNavigator().setSpeed(scale < 1 ? scale * 3 : scale);
+				System.out.println("yes" + scale);
+				if (event.getEntityLiving() instanceof EntityPlayer && properties.scale == properties.target_scale && properties.base_speed > 0) {
+					System.out.println("yes2" + properties.base_speed);
+					event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale * properties.base_speed);
 				}
-				if (event.getEntityLiving() instanceof EntityPlayer && properties.scale == properties.target_scale) {
-					event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale * 0.10000000149011612D);
-					((EntityPlayer) event.getEntityLiving()).capabilities.setFlySpeed((float) (scale * 0.05D));
-				}
-
+				//					((EntityPlayer) event.getEntityLiving()).capabilities.setFlySpeed((float) (scale * 0.05D));
 			}
-			event.getEntityLiving().stepHeight = scale > 0.5F ? scale : (float) (0.5D * scale);
+			event.getEntityLiving().stepHeight = scale < 0.5F ? scale : (float) (0.5D * scale);
 			if (!(event.getEntity() instanceof EntityPlayer)) {
 				if (sizeCache.containsKey(event.getEntity())) {
 					Vector2f size = sizeCache.get(event.getEntity());
@@ -118,6 +121,17 @@ public class CommonEvents {
 			((EntityOcelot) event.getEntity()).targetTasks.addTask(2, new EntityAIHuntSmallCreatures(((EntityOcelot) event.getEntity())));
 		}
 	}
+
+	@SubscribeEvent
+	public void onEntityJoinWorldEvent(EntityJoinWorldEvent event) {
+		if (event.getEntity() instanceof EntityLivingBase) {
+			SizeChangeEntityProperties properties = EntityPropertiesHandler.INSTANCE.getProperties((event.getEntity()), SizeChangeEntityProperties.class);
+			if(properties != null){
+				properties.base_speed = ((EntityLivingBase)event.getEntity()).getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+			}
+		}
+	}
+
 
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event) {
