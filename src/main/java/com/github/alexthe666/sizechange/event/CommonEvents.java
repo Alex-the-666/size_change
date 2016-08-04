@@ -36,48 +36,50 @@ public class CommonEvents {
 	public void onEntityUpdate(LivingUpdateEvent event) {
 		float initialScale = SizeChangeUtils.getScale(event.getEntity());
 		SizeChangeEntityProperties properties = EntityPropertiesHandler.INSTANCE.getProperties((event.getEntity()), SizeChangeEntityProperties.class);
-		if(properties.scale == 0){
-			properties.scale = 1;
-		}
-		if(properties.target_scale == 0){
-			properties.target_scale = 1;
-		}
-		if(properties.scale < properties.target_scale){
-			float max = properties.target_scale - properties.scale;
-			float sub = max / 40;
-			properties.scale += sub;
-			if(properties.scale >= properties.target_scale) {
-				properties.scale = properties.target_scale;
+		if(properties != null) {
+			if (properties.scale == 0) {
+				properties.scale = 1;
 			}
+			if (properties.target_scale == 0) {
+				properties.target_scale = 1;
 			}
-		if(properties.scale > properties.target_scale){
-			float max = properties.scale - properties.target_scale;
-			float sub = max / 40;
-			properties.scale -= sub;
-			if(properties.scale <= properties.target_scale) {
-				properties.scale = properties.target_scale;
+			if (properties.scale < properties.target_scale) {
+				float max = properties.target_scale - properties.scale;
+				float sub = max / 40;
+				properties.scale += sub;
+				if (properties.scale >= properties.target_scale) {
+					properties.scale = properties.target_scale;
+				}
 			}
-		}
-		SizeChangeUtils.setScale(event.getEntityLiving(), properties.scale);
-		float scale = SizeChangeUtils.getScale(event.getEntity());
-		if (scale != initialScale) {
-			if (event.getEntityLiving() instanceof EntityLiving) {
-				((EntityLiving) event.getEntityLiving()).getNavigator().setSpeed(scale < 1 ? scale * 3 : scale);
+			if (properties.scale > properties.target_scale) {
+				float max = properties.scale - properties.target_scale;
+				float sub = max / 40;
+				properties.scale -= sub;
+				if (properties.scale <= properties.target_scale) {
+					properties.scale = properties.target_scale;
+				}
 			}
-			if (event.getEntityLiving() instanceof EntityPlayer && properties.scale == properties.target_scale) {
-				event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale * 0.10000000149011612D);
-				((EntityPlayer) event.getEntityLiving()).capabilities.setFlySpeed((float) (scale * 0.05D));
-			}
+			SizeChangeUtils.setScale(event.getEntityLiving(), properties.scale);
+			float scale = SizeChangeUtils.getScale(event.getEntity());
+			if (scale != initialScale) {
+				if (event.getEntityLiving() instanceof EntityLiving) {
+					((EntityLiving) event.getEntityLiving()).getNavigator().setSpeed(scale < 1 ? scale * 3 : scale);
+				}
+				if (event.getEntityLiving() instanceof EntityPlayer && properties.scale == properties.target_scale) {
+					event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale * 0.10000000149011612D);
+					((EntityPlayer) event.getEntityLiving()).capabilities.setFlySpeed((float) (scale * 0.05D));
+				}
 
-		}
-		event.getEntityLiving().stepHeight = scale > 0.5F ? scale : (float) (0.5D * scale);
-		if (!(event.getEntity() instanceof EntityPlayer)) {
-			if (sizeCache.containsKey(event.getEntity())) {
-				Vector2f size = sizeCache.get(event.getEntity());
-				SizeChangeUtils.setSize(event.getEntity(), size.x * properties.scale, size.y * properties.scale);
-			} else {
-				sizeCache.put(event.getEntity(), new Vector2f(event.getEntity().width , event.getEntity().height));
-				SizeChangeUtils.setSize(event.getEntity(), event.getEntity().width * scale, event.getEntity().height * scale);
+			}
+			event.getEntityLiving().stepHeight = scale > 0.5F ? scale : (float) (0.5D * scale);
+			if (!(event.getEntity() instanceof EntityPlayer)) {
+				if (sizeCache.containsKey(event.getEntity())) {
+					Vector2f size = sizeCache.get(event.getEntity());
+					SizeChangeUtils.setSize(event.getEntity(), size.x * properties.scale, size.y * properties.scale);
+				} else {
+					sizeCache.put(event.getEntity(), new Vector2f(event.getEntity().width, event.getEntity().height));
+					SizeChangeUtils.setSize(event.getEntity(), event.getEntity().width * scale, event.getEntity().height * scale);
+				}
 			}
 		}
 		// event.getEntityLiving().setAIMoveSpeed(scale);

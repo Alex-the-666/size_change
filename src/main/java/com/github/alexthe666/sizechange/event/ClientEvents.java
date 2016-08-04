@@ -41,22 +41,6 @@ public class ClientEvents {
     @SubscribeEvent
     public void onLivingRender(RenderLivingEvent.Pre event) {
         event.setCanceled(true);
-        Field shadow = ReflectionHelper.findField(Render.class, "shadowSize", "field_76989_e");
-        float shadowSize = 1;
-        try {
-            shadowSize = (Float) shadow.get(event.getRenderer());
-        } catch (IllegalArgumentException e1) {
-            e1.printStackTrace();
-        } catch (IllegalAccessException e1) {
-            e1.printStackTrace();
-        }
-        try {
-            shadow.set(event.getRenderer(), shadowSize * 0.5F);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
         doRender(event.getRenderer(), event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getEntity().rotationYaw, LLibrary.PROXY.getPartialTicks());
     }
 
@@ -126,10 +110,7 @@ public class ClientEvents {
                 if (f5 > 1.0F) {
                     f5 = 1.0F;
                 }
-                if (!(entity instanceof EntityPlayer)) {
-                    f5 *= 1 / SizeChangeUtils.getScale(entity);
-                    f6 *= 1 / SizeChangeUtils.getScale(entity);
-                }
+                f6 *= SizeChangeUtils.getScale(entity);
             }
             GlStateManager.enableAlpha();
             render.getMainModel().setLivingAnimations(entity, f6, f5, partialTicks);
