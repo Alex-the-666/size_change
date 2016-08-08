@@ -36,7 +36,6 @@ import java.lang.reflect.Method;
 
 public class ClientEvents {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final ResourceLocation GUARDIAN_BEAM_TEXTURE = new ResourceLocation("textures/entity/guardian_beam.png");
 
     @SubscribeEvent
     public void onLivingRender(RenderLivingEvent.Pre event) {
@@ -111,11 +110,6 @@ public class ClientEvents {
                 if (f5 > 1.0F)
                 {
                     f5 = 1.0F;
-                }
-                if(SizeChangeUtils.getScale(entity) >= 1){
-                    f6 *= 1/SizeChangeUtils.getScale(entity);
-                }else{
-                    f6 *= SizeChangeUtils.getScale(entity);
                 }
             }
             GlStateManager.enableAlpha();

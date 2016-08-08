@@ -16,7 +16,7 @@ public class SizeChangeUtils {
     public static void setSize(Entity entity, float x, float y) {
         if (entity instanceof EntityPlayer) {
             x = MathHelper.clamp_float(x, 0.25F, 7);
-            y = MathHelper.clamp_float(y, 0.3F, 7);
+            y = MathHelper.clamp_float(y, 0.3F, 16);
         }
         entity.setEntityBoundingBox(new AxisAlignedBB(entity.posX - x / 2, entity.posY, entity.posZ - x / 2, entity.posX + x / 2, entity.posY + y, entity.posZ + x / 2));
         entity.width = x;

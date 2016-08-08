@@ -32,6 +32,9 @@ public class EntityShrinkCharge extends EntityThrowable
     }
 
     protected void onImpact(RayTraceResult result) {
+        if (result.entityHit instanceof EntityGrowCharge){
+            this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, 2, true, true);
+        }
         if (result.entityHit != null && !result.entityHit.equals(this.getThrower())) {
             if (result.entityHit instanceof EntityLivingBase) {
                 float initialScale = getNearestSize(SizeChangeUtils.getScale(result.entityHit), new float[]{0.125F, 0.25F, 0.5F, 1F, 2F, 4F, 8F});

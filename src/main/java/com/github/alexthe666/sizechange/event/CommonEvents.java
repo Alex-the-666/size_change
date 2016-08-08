@@ -60,20 +60,17 @@ public class CommonEvents {
 					properties.scale = properties.target_scale;
 				}
 			}
-			if (properties.target_scale - (properties.target_scale * 0.1) <= properties.scale && properties.scale < properties.target_scale){
+			double round = (double)Math.round(properties.scale * 1000) / 1000;
+			if (round == properties.target_scale){
 				properties.scale = properties.target_scale;
+				System.out.println(round);
 			}
 
 			SizeChangeUtils.setScale(event.getEntityLiving(), properties.scale);
 			float scale = SizeChangeUtils.getScale(event.getEntity());
-			if (scale != initialScale) {
-				System.out.println("yes" + scale);
-				if (event.getEntityLiving() instanceof EntityPlayer && properties.scale == properties.target_scale && properties.base_speed > 0) {
-					System.out.println("yes2" + properties.base_speed);
+				if (properties.base_speed > 0 && !event.getEntityLiving().worldObj.isRemote) {
 					event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale * properties.base_speed);
 				}
-				//					((EntityPlayer) event.getEntityLiving()).capabilities.setFlySpeed((float) (scale * 0.05D));
-			}
 			event.getEntityLiving().stepHeight = scale < 0.5F ? scale : (float) (0.5D * scale);
 			if (!(event.getEntity() instanceof EntityPlayer)) {
 				if (sizeCache.containsKey(event.getEntity())) {
