@@ -2,9 +2,10 @@ package com.github.alexthe666.sizechange.entity;
 
 import net.ilexiconn.llibrary.server.entity.EntityProperties;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class SizeChangeEntityProperties extends EntityProperties {
+public class SizeChangeEntityProperties extends EntityProperties<EntityLivingBase> {
 
 	public float scale;
 	public float target_scale;
@@ -28,6 +29,8 @@ public class SizeChangeEntityProperties extends EntityProperties {
 	public void init() {
 		scale = 1;
 		target_scale = 1;
+		base_speed = this.getEntity().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+		System.out.println(base_speed);
 	}
 
 	@Override

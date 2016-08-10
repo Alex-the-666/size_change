@@ -35,7 +35,6 @@ public class CommonEvents {
 
 	@SubscribeEvent
 	public void onEntityUpdate(LivingUpdateEvent event) {
-		float initialScale = SizeChangeUtils.getScale(event.getEntity());
 		SizeChangeEntityProperties properties = EntityPropertiesHandler.INSTANCE.getProperties((event.getEntity()), SizeChangeEntityProperties.class);
 		if(properties != null) {
 			if (properties.scale == 0) {
@@ -63,9 +62,7 @@ public class CommonEvents {
 			double round = (double)Math.round(properties.scale * 1000) / 1000;
 			if (round == properties.target_scale){
 				properties.scale = properties.target_scale;
-				System.out.println(round);
 			}
-
 			SizeChangeUtils.setScale(event.getEntityLiving(), properties.scale);
 			float scale = SizeChangeUtils.getScale(event.getEntity());
 				if (properties.base_speed > 0 && !event.getEntityLiving().worldObj.isRemote) {
@@ -118,17 +115,6 @@ public class CommonEvents {
 			((EntityOcelot) event.getEntity()).targetTasks.addTask(2, new EntityAIHuntSmallCreatures(((EntityOcelot) event.getEntity())));
 		}
 	}
-
-	@SubscribeEvent
-	public void onEntityJoinWorldEvent(EntityJoinWorldEvent event) {
-		if (event.getEntity() instanceof EntityLivingBase) {
-			SizeChangeEntityProperties properties = EntityPropertiesHandler.INSTANCE.getProperties((event.getEntity()), SizeChangeEntityProperties.class);
-			if(properties != null){
-				properties.base_speed = ((EntityLivingBase)event.getEntity()).getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-			}
-		}
-	}
-
 
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event) {
