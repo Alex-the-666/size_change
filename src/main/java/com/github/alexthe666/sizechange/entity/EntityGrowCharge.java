@@ -12,6 +12,8 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityGrowCharge extends EntityThrowable
 {
@@ -50,6 +52,15 @@ public class EntityGrowCharge extends EntityThrowable
         if (!this.worldObj.isRemote) {
             this.setDead();
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public int getBrightnessForRender(float partialTicks) {
+        return 15728880;
+    }
+
+    public float getBrightness(float partialTicks) {
+        return 1.0F;
     }
 
     public float getNearestSize(float i, float[] sizes) {
