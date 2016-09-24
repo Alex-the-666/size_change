@@ -66,7 +66,9 @@ public class CommonEvents {
 			SizeChangeUtils.setScale(event.getEntityLiving(), properties.scale);
 			float scale = SizeChangeUtils.getScale(event.getEntity());
 				if (properties.base_speed > 0 && !event.getEntityLiving().worldObj.isRemote) {
-					event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale * properties.base_speed);
+					float scale_0 = scale == 1 ? 1 : scale > 1 ? scale / 3 : scale * 3;
+					event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale_0 * properties.base_speed);
+					System.out.println(scale * properties.base_speed);
 				}
 			event.getEntityLiving().stepHeight = scale < 0.5F ? scale : (float) (0.5D * scale);
 			if (!(event.getEntity() instanceof EntityPlayer)) {
@@ -113,6 +115,11 @@ public class CommonEvents {
 			}
 			((EntityOcelot) event.getEntity()).tasks.addTask(4, new EntityAINewOcelotFear(((EntityOcelot) event.getEntity()), EntityPlayer.class, 16.0F, 0.8D, 1.33D));
 			((EntityOcelot) event.getEntity()).targetTasks.addTask(2, new EntityAIHuntSmallCreatures(((EntityOcelot) event.getEntity())));
+		}
+		if (event.getEntity() instanceof EntityLivingBase) {
+			SizeChangeEntityProperties properties = EntityPropertiesHandler.INSTANCE.getProperties((event.getEntity()), SizeChangeEntityProperties.class);
+			properties.base_speed = ((EntityLivingBase)event.getEntity()).getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+			System.out.println(properties.base_speed);
 		}
 	}
 

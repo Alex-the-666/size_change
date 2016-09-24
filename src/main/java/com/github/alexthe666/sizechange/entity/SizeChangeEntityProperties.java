@@ -30,7 +30,6 @@ public class SizeChangeEntityProperties extends EntityProperties<EntityLivingBas
 		scale = 1;
 		target_scale = 1;
 		base_speed = this.getEntity().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-		System.out.println(base_speed);
 	}
 
 	@Override
