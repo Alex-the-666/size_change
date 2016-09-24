@@ -16,8 +16,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
@@ -141,4 +143,15 @@ public class CommonEvents {
 		}
 	}
 
+	@SubscribeEvent
+	public void onEntityHurt(LivingHurtEvent event) {
+		SizeChangeEntityProperties properties = EntityPropertiesHandler.INSTANCE.getProperties((event.getEntity()), SizeChangeEntityProperties.class);
+		float scale = properties.scale;
+		event.setAmount(event.getAmount() * 1/scale);
+		if(event.getSource().getEntity() != null && event.getSource().getEntity() instanceof EntityLivingBase){
+			SizeChangeEntityProperties properties1 = EntityPropertiesHandler.INSTANCE.getProperties((event.getSource().getEntity()), SizeChangeEntityProperties.class);
+			float scale1 = properties1.scale;
+			event.setAmount(event.getAmount() * scale1);
+		}
+	}
 }
