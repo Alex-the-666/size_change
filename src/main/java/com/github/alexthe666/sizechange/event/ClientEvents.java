@@ -1,7 +1,9 @@
 package com.github.alexthe666.sizechange.event;
 
+import com.github.alexthe666.sizechange.SizeChange;
 import com.github.alexthe666.sizechange.SizeChangeUtils;
 import com.github.alexthe666.sizechange.items.ItemRay;
+import com.github.alexthe666.sizechange.message.MessageUseWeapon;
 import net.ilexiconn.llibrary.LLibrary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -13,14 +15,20 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -33,6 +41,7 @@ import org.lwjgl.util.glu.GLU;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 public class ClientEvents {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -40,8 +49,10 @@ public class ClientEvents {
     @SubscribeEvent
     public void onLivingRender(RenderLivingEvent.Pre event) {
         event.setCanceled(true);
+        System.out.println(Minecraft.getMinecraft().objectMouseOver);
         doRender(event.getRenderer(), event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getEntity().rotationYaw, LLibrary.PROXY.getPartialTicks());
     }
+
 
     public void doRender(RenderLivingBase render, EntityLivingBase entity, double x, double y, double z, float entityYaw, float partialTicks) {
         GlStateManager.pushMatrix();

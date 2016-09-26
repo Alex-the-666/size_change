@@ -70,7 +70,6 @@ public class CommonEvents {
 				if (properties.base_speed > 0 && !event.getEntityLiving().worldObj.isRemote) {
 					float scale_0 = scale == 1 ? 1 : scale > 1 ? scale / 3 : scale * 3;
 					event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale_0 * properties.base_speed);
-					System.out.println(scale * properties.base_speed);
 				}
 			event.getEntityLiving().stepHeight = scale < 0.5F ? scale : (float) (0.5D * scale);
 			if (!(event.getEntity() instanceof EntityPlayer)) {
@@ -121,7 +120,6 @@ public class CommonEvents {
 		if (event.getEntity() instanceof EntityLivingBase) {
 			SizeChangeEntityProperties properties = EntityPropertiesHandler.INSTANCE.getProperties((event.getEntity()), SizeChangeEntityProperties.class);
 			properties.base_speed = ((EntityLivingBase)event.getEntity()).getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-			System.out.println(properties.base_speed);
 		}
 	}
 
@@ -140,6 +138,9 @@ public class CommonEvents {
 			if (event.player.isElytraFlying() && event.player.rotationPitch < -45 && scale < 1) {
 				event.player.motionY += 0.1F;
 			}
+		}
+		if(!event.player.getEntityWorld().isRemote){
+			((EntityPlayerMP)event.player).interactionManager.setBlockReachDistance(Math.max(scale * 5F, 3F));
 		}
 	}
 

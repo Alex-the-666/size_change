@@ -6,7 +6,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions
 
 import java.util.Map;
 
-@MCVersion("1.9")
+@MCVersion("1.10.2")
 @TransformerExclusions({ "com.github.alexthe666.sizechange.asm." })
 public class SizeChangeLoadingPlugin implements IFMLLoadingPlugin {
 	@Override

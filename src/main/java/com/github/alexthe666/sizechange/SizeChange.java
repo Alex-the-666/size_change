@@ -2,7 +2,9 @@ package com.github.alexthe666.sizechange;
 
 import com.github.alexthe666.sizechange.entity.EntityGrowCharge;
 import com.github.alexthe666.sizechange.entity.EntityShrinkCharge;
+import com.github.alexthe666.sizechange.message.MessageUseWeapon;
 import net.ilexiconn.llibrary.server.entity.EntityPropertiesHandler;
+import net.ilexiconn.llibrary.server.network.NetworkWrapper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -20,6 +22,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import com.github.alexthe666.sizechange.entity.SizeChangeEntityProperties;
 import com.github.alexthe666.sizechange.event.CommonEvents;
 import com.github.alexthe666.sizechange.items.ModItems;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -34,6 +37,8 @@ public class SizeChange {
 	public static CommonProxy PROXY;
 	public static CreativeTabs tab;
 	public static SoundEvent ray;
+	@NetworkWrapper({ MessageUseWeapon.class })
+	public static SimpleNetworkWrapper NETWORK_WRAPPER;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
