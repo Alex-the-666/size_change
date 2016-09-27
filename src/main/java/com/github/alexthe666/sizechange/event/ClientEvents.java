@@ -49,7 +49,6 @@ public class ClientEvents {
     @SubscribeEvent
     public void onLivingRender(RenderLivingEvent.Pre event) {
         event.setCanceled(true);
-        System.out.println(Minecraft.getMinecraft().objectMouseOver);
         doRender(event.getRenderer(), event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getEntity().rotationYaw, LLibrary.PROXY.getPartialTicks());
     }
 
