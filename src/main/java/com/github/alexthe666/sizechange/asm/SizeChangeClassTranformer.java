@@ -46,7 +46,7 @@ public class SizeChangeClassTranformer implements IClassTransformer {
 					}
 				}
 
-				ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+				ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 				classNode.accept(classWriter);
 				return classWriter.toByteArray();
 			}
@@ -75,7 +75,7 @@ public class SizeChangeClassTranformer implements IClassTransformer {
 						break;
 					}
 				}
-				ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+				ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 				classNode.accept(classWriter);
 				return classWriter.toByteArray();
 			}
@@ -105,7 +105,7 @@ public class SizeChangeClassTranformer implements IClassTransformer {
 
 					}
 				}
-				ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+				ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 				classNode.accept(classWriter);
 				return classWriter.toByteArray();
 			}
