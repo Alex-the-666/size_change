@@ -45,7 +45,7 @@ repositories {
 }
 
 dependencies {
-    compile "net.ilexiconn:llibrary:1.4.0-1.10.2:dev"
+    compile "net.ilexiconn:llibrary:1.7.0-1.10.2:dev"
 }
 
 processResources
