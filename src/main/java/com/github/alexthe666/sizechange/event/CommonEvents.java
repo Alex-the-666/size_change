@@ -1,13 +1,12 @@
 package com.github.alexthe666.sizechange.event;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-
+import com.github.alexthe666.sizechange.SizeChangeUtils;
 import com.github.alexthe666.sizechange.entity.SizeChangeEntityProperties;
-import net.ilexiconn.llibrary.server.entity.EntityProperties;
+import com.github.alexthe666.sizechange.entity.ai.EntityAIHuntSmallCreatures;
+import com.github.alexthe666.sizechange.entity.ai.EntityAINewOcelotFear;
+import com.google.common.collect.Maps;
 import net.ilexiconn.llibrary.server.entity.EntityPropertiesHandler;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -16,7 +15,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -24,13 +22,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
-
 import org.lwjgl.util.vector.Vector2f;
 
-import com.github.alexthe666.sizechange.SizeChangeUtils;
-import com.github.alexthe666.sizechange.entity.ai.EntityAIHuntSmallCreatures;
-import com.github.alexthe666.sizechange.entity.ai.EntityAINewOcelotFear;
-import com.google.common.collect.Maps;
+import java.lang.reflect.Field;
+import java.util.Map;
 
 public class CommonEvents {
 	private Map<Entity, Vector2f> sizeCache = Maps.newHashMap();
@@ -67,7 +62,7 @@ public class CommonEvents {
 			}
 			SizeChangeUtils.setScale(event.getEntityLiving(), properties.scale);
 			float scale = SizeChangeUtils.getScale(event.getEntity());
-				if (properties.base_speed > 0 && !event.getEntityLiving().worldObj.isRemote) {
+				if (properties.base_speed > 0 && !event.getEntityLiving().world.isRemote) {
 					float scale_0 = scale == 1 ? 1 : scale > 1 ? scale / 3 : scale * 3;
 					event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(scale_0 * properties.base_speed);
 				}
@@ -149,8 +144,8 @@ public class CommonEvents {
 		SizeChangeEntityProperties properties = EntityPropertiesHandler.INSTANCE.getProperties((event.getEntity()), SizeChangeEntityProperties.class);
 		float scale = properties.scale;
 		event.setAmount(event.getAmount() * 1/scale);
-		if(event.getSource().getEntity() != null && event.getSource().getEntity() instanceof EntityLivingBase){
-			SizeChangeEntityProperties properties1 = EntityPropertiesHandler.INSTANCE.getProperties((event.getSource().getEntity()), SizeChangeEntityProperties.class);
+		if(event.getSource().getTrueSource() != null && event.getSource().getTrueSource() instanceof EntityLivingBase){
+			SizeChangeEntityProperties properties1 = EntityPropertiesHandler.INSTANCE.getProperties((event.getSource().getTrueSource()), SizeChangeEntityProperties.class);
 			float scale1 = properties1.scale;
 			event.setAmount(event.getAmount() * scale1);
 		}

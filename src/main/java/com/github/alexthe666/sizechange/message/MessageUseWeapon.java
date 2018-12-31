@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageUseWeapon extends AbstractMessage<MessageUseWeapon> {
@@ -25,7 +24,7 @@ public class MessageUseWeapon extends AbstractMessage<MessageUseWeapon> {
 
     @Override
     public void onServerReceived(MinecraftServer server, MessageUseWeapon message, EntityPlayer player, MessageContext messageContext) {
-        Entity target = player.worldObj.getEntityByID(message.entityId);
+        Entity target = player.world.getEntityByID(message.entityId);
         System.out.println("Entity = " + target);
         double dist = player.getDistanceSqToEntity(target);
         double reach = Math.max(5 * SizeChangeUtils.getScale(player), 3);

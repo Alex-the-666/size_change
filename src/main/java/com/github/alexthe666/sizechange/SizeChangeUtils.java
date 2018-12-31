@@ -1,7 +1,6 @@
 package com.github.alexthe666.sizechange;
 
 import com.github.alexthe666.sizechange.entity.SizeChangeEntityProperties;
-import com.google.common.collect.Maps;
 import net.ilexiconn.llibrary.server.entity.EntityPropertiesHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -9,14 +8,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.Map;
-
 public class SizeChangeUtils {
 
     public static void setSize(Entity entity, float x, float y) {
         if (entity instanceof EntityPlayer) {
-            x = MathHelper.clamp_float(x, 0.25F, 7);
-            y = MathHelper.clamp_float(y, 0.3F, 16);
+            x = MathHelper.clamp(x, 0.25F, 7);
+            y = MathHelper.clamp(y, 0.3F, 16);
         }
         entity.setEntityBoundingBox(new AxisAlignedBB(entity.posX - x / 2, entity.posY, entity.posZ - x / 2, entity.posX + x / 2, entity.posY + y, entity.posZ + x / 2));
         entity.width = x;

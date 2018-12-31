@@ -1,20 +1,18 @@
 package com.github.alexthe666.sizechange.items;
 
 import com.github.alexthe666.sizechange.SizeChange;
-
 import com.github.alexthe666.sizechange.entity.EntityGrowCharge;
 import com.github.alexthe666.sizechange.entity.EntityShrinkCharge;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ItemRay extends Item {
 
@@ -27,7 +25,6 @@ public class ItemRay extends Item {
 		this.setMaxStackSize(1);
 		this.setMaxDamage(200);
 		this.setCreativeTab(SizeChange.tab);
-		GameRegistry.register(this, new ResourceLocation((shrink ? "sizechange:shrink_ray" : "sizechange:growth_ray")));
 	}
 
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
@@ -44,7 +41,7 @@ public class ItemRay extends Item {
 				charge = new EntityGrowCharge(worldIn, playerIn);
 			}
 			charge.setHeadingFromThrower(playerIn, playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 1.5F, 1.0F);
-			worldIn.spawnEntityInWorld(charge);
+			worldIn.spawnEntity(charge);
 		}
 
 		playerIn.addStat(StatList.getObjectUseStats(this));

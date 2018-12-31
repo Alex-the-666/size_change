@@ -1,9 +1,5 @@
 package com.github.alexthe666.sizechange.asm;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-
 import com.github.alexthe666.sizechange.SizeChangeUtils;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -15,36 +11,47 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.util.List;
 
 public class SizeChangeHooks {
 
     public static float getReachDistanceCreative() {
-        float scale = SizeChangeUtils.getScale(Minecraft.getMinecraft().thePlayer);
-        return Math.max(scale * 5F, 3F);
+        float scale = SizeChangeUtils.getScale(Minecraft.getMinecraft().player);
+        return MathHelper.clamp(scale * 5F, 2, 18);
     }
 
+    public static boolean canReachFlag() {
+        return false;
+    }
+
+
     public static float getReachDistanceSurvival() {
-        float scale = SizeChangeUtils.getScale(Minecraft.getMinecraft().thePlayer);
-        return Math.max(scale * 4.5F, 2.5F);
+        float scale = SizeChangeUtils.getScale(Minecraft.getMinecraft().player);
+        return MathHelper.clamp(scale * 4.5F, 2, 18);
     }
 
     public static float get3rdPersonDistance() {
-        float scale = SizeChangeUtils.getScale(Minecraft.getMinecraft().thePlayer);
-        return scale * 4F;
+        float scale = SizeChangeUtils.getScale(Minecraft.getMinecraft().player);
+        return 10;
+    }
+
+    public static float get3rdPersonDistanceD3() {
+        float scale = SizeChangeUtils.getScale(Minecraft.getMinecraft().player);
+        float thirdPersonDistancePrev = 4 * scale;
+        double d3 = (double)(thirdPersonDistancePrev + ((4.0F * scale) - thirdPersonDistancePrev) * LLibrary.PROXY.getPartialTicks());
+        return 10;
     }
 
     public static void getMouseOver() {
         Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
         float ticks = LLibrary.PROXY.getPartialTicks();
         if (entity != null) {
-            if (Minecraft.getMinecraft().theWorld != null) {
+            if (Minecraft.getMinecraft().world != null) {
                 Minecraft.getMinecraft().mcProfiler.startSection("pick");
                 Minecraft.getMinecraft().pointedEntity = null;
                 double d0 = (double) Minecraft.getMinecraft().playerController.getBlockReachDistance();
@@ -53,7 +60,7 @@ public class SizeChangeHooks {
                 boolean flag = false;
                 int i = 3;
                 double d1 = d0;
-                float scale = Math.max(SizeChangeUtils.getScale(Minecraft.getMinecraft().thePlayer), 0.5F);
+                float scale = Math.max(SizeChangeUtils.getScale(Minecraft.getMinecraft().player), 0.5F);
 
                 if (Minecraft.getMinecraft().playerController.extendedReach()) {
                     d1 = 6.0D * scale;
@@ -69,10 +76,10 @@ public class SizeChangeHooks {
                 }
 
                 Vec3d vec3d1 = entity.getLook(ticks);
-                Vec3d vec3d2 = vec3d.addVector(vec3d1.xCoord * d0, vec3d1.yCoord * d0, vec3d1.zCoord * d0);
+                Vec3d vec3d2 = vec3d.addVector(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0);
                 setPointedEntity(null);
                 Vec3d vec3d3 = null;
-                List<Entity> list = Minecraft.getMinecraft().theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec3d1.xCoord * d0, vec3d1.yCoord * d0, vec3d1.zCoord * d0).expand(1.0D, 1.0D, 1.0D), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
+                List<Entity> list = Minecraft.getMinecraft().world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().grow(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0).expand(1.0D, 1.0D, 1.0D), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
                     public boolean apply(@Nullable Entity p_apply_1_) {
                         return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
                     }
@@ -81,9 +88,9 @@ public class SizeChangeHooks {
 
                 for (int j = 0; j < list.size(); ++j) {
                     Entity entity1 = (Entity) list.get(j);
-                    AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expandXyz((double) entity1.getCollisionBorderSize());
+                    AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand((double) entity1.getCollisionBorderSize(), (double) entity1.getCollisionBorderSize(), (double) entity1.getCollisionBorderSize());
                     RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(vec3d, vec3d2);
-                    if (axisalignedbb.isVecInside(vec3d)) {
+                    if (axisalignedbb.contains(vec3d)) {
                         if (d2 >= 0.0D) {
                             setPointedEntity(entity1);
                             vec3d3 = raytraceresult == null ? vec3d : raytraceresult.hitVec;

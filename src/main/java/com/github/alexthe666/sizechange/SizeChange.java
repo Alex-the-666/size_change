@@ -9,7 +9,7 @@ import com.github.alexthe666.sizechange.message.MessageUseWeapon;
 import net.ilexiconn.llibrary.server.entity.EntityPropertiesHandler;
 import net.ilexiconn.llibrary.server.network.NetworkWrapper;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.GameData;
 
 @Mod(modid = SizeChange.MODID, name = SizeChange.NAME, version = SizeChange.VERSION)
 public class SizeChange {
@@ -37,26 +37,25 @@ public class SizeChange {
     public static SoundEvent ray;
     @NetworkWrapper({ MessageUseWeapon.class })
     public static SimpleNetworkWrapper NETWORK_WRAPPER;
-
+    //-Dfml.coreMods.load=com.github.alexthe666.sizechange.asm.SizeChangeLoadingPlugin
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         tab = new CreativeTabs("sizechange") {
             @Override
-            public Item getTabIconItem() {
-                return ModItems.shrink_ray;
+            public ItemStack getTabIconItem() {
+                return new ItemStack(ModItems.shrink_ray);
             }
         };
-        ModItems.init();
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
         EntityPropertiesHandler.INSTANCE.registerProperties(SizeChangeEntityProperties.class);
         MinecraftForge.EVENT_BUS.register(new CommonEvents());
-        EntityRegistry.registerModEntity(EntityShrinkCharge.class, "shrink_charge", 0, INSTANCE, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityGrowCharge.class, "grow_charge", 1, INSTANCE, 80, 3, true);
+        EntityRegistry.registerModEntity(new ResourceLocation("size_change:shrink_charge"), EntityShrinkCharge.class, "shrink_charge", 0, INSTANCE, 80, 3, true);
+        EntityRegistry.registerModEntity(new ResourceLocation("size_change:grow_charge"), EntityGrowCharge.class, "grow_charge", 1, INSTANCE, 80, 3, true);
         PROXY.render();
-        ray = GameRegistry.register(new SoundEvent(new ResourceLocation("sizechange", "ray")).setRegistryName(new ResourceLocation("sizechange", "ray")));
+        ray = GameData.register_impl(new SoundEvent(new ResourceLocation("sizechange", "ray")).setRegistryName(new ResourceLocation("sizechange", "ray")));
     }
 
     @EventHandler
